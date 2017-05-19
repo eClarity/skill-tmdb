@@ -7,10 +7,11 @@
 * `What movies are now playing`
 * `tell me about robin williams`
 
-## Configuration
-* Add the following to your Mycroft Configuration *
+Add a block to your Mycroft configuration file like this:
 
+```
   "TmdbSkill": {
-    "api_key": "your api key goes here"
+    "api_key": "you api key goes here"
   }
+```
 
