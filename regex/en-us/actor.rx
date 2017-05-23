@@ -1,0 +1,1 @@
+(tell us about|tell me about|what does movie database say about|search for) (?P<Actor>.*)

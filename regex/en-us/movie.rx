@@ -1,0 +1,1 @@
+(movie overview for|find movie|look up movie|search movie) (?P<Movie>.*)

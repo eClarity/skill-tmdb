@@ -16,7 +16,7 @@
 # along with Mycroft Core.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import tmdbsimple as tmdb
+from tmdbv3api import TMDb
 
 from adapt.intent import IntentBuilder
 
@@ -28,14 +28,15 @@ __author__ = 'eClarity'
 
 LOGGER = getLogger(__name__)
 
+tmdb = TMDb(api_key="59187b61e65a78d19393049fdf562525", debug=False, lang="en")
+
 class TmdbSkill(MycroftSkill):
     def __init__(self):
         super(TmdbSkill, self).__init__(name="TmdbSkill")
-	tmdb.API_KEY = self.config['api_key']
 
     def initialize(self):
 	search_actor_intent = IntentBuilder("SearchActorIntent"). \
-            require("SearchActorKeyword").build()
+            require("SearchActorKeyword").require("Actor").build()
         self.register_intent(search_actor_intent,
                              self.handle_search_actor_intent)
 
@@ -49,27 +50,50 @@ class TmdbSkill(MycroftSkill):
         self.register_intent(now_playing_intent,
                              self.handle_now_playing_intent)
 
+	movie_intent = IntentBuilder("MovieIntent"). \
+            require("MovieKeyword").require("Movie").build()
+        self.register_intent(movie_intent,
+                             self.handle_movie_intent)
 
+	popular_tv_intent = IntentBuilder("PopularTvIntent"). \
+            require("PopularTvKeyword").build()
+        self.register_intent(popular_tv_intent,
+                             self.handle_popular_tv_intent)
 
 
     def handle_upcoming_intent(self, message):
-    	movie = tmdb.Movies()
-	response = movie.upcoming()
-	for s in movie.results:
-            self.speak(s['title'])
+    	upcoming = tmdb.upcoming()
+	for movie in upcoming:
+            self.speak(movie.title)
 
     def handle_now_playing_intent(self, message):
-    	movie = tmdb.Movies()
-	response = movie.now_playing()
-	for s in movie.results:
-            self.speak(s['title'])
+    	now_playing = tmdb.now_playing()
+	for movie in now_playing:
+            self.speak(movie.title)
 
-    ## This intent is not ready for use ##
     def handle_search_actor_intent(self, message):
-	search = tmdb.Search()
-	response = search.person(query='Robin Williams')
-	for s in search.results:
-    	    self.speak(s['name'][0])
+	actor = message.data.get("Actor")
+	search = tmdb.search_person(actor)
+	for result in search [:1]:
+    	    actor = result.id
+    	    person = tmdb.get_person(actor)
+    	    self.speak(person.biography)
+
+    def handle_movie_intent(self, message):
+	list = message.data.get("Movie")
+	search = tmdb.search(list)
+	for result in search [:1]:
+    	    id = result.id
+    	    movie = tmdb.get_movie(id)
+	    response = movie.overview
+    	    self.speak(response)
+
+    def handle_popular_tv_intent(self, message):
+    	popular = tmdb.popular_shows()
+	self.speak("Sure, here are the most popular shows" )
+	for show in popular:
+            self.speak(show.name)
+	    
 
     def stop(self):
         pass
