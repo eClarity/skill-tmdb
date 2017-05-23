@@ -10,9 +10,7 @@
 * 'find popular shows'
 
 ## Configuration
-* Add the following to your Mycroft Configuration *
+* Edit __init__.py to add your Tmdb api key *
 
-  "TmdbSkill": {
-    "api_key": "your api key goes here"
-  }
+  tmdb = TMDb(api_key="your api key goes here", debug=False, lang="en")
 
