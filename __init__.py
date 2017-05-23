@@ -28,7 +28,8 @@ __author__ = 'eClarity'
 
 LOGGER = getLogger(__name__)
 
-tmdb = TMDb(api_key="59187b61e65a78d19393049fdf562525", debug=False, lang="en")
+##This will eventually move to the mycroft configuration
+tmdb = TMDb(api_key="your api key goes here", debug=False, lang="en")
 
 class TmdbSkill(MycroftSkill):
     def __init__(self):
